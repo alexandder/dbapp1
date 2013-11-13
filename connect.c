@@ -16,6 +16,7 @@ void doSQL(PGconn *conn, char *command) {
       int m, n;
       int nrows = PQntuples(result);
       int nfields = PQnfields(result);
+      printf("\nTabela pilkarz\n");
       for(m = 0; m < nrows; m++) {
 	for(n = 0; n < nfields; n++) {
 	  printf(" %s = %s,", PQfname(result, n), PQgetvalue(result, m, n));
@@ -47,7 +48,7 @@ void addFootballer(PGconn *conn) {
   scanf("%s", name);
   printf("Podaj nazwisko: ");
   scanf("%s", lastName);
-  printf("Podaj date urodzin (DD-MM-RRRR): ");
+  printf("Podaj date urodzin (RRRR-MM-DD): ");
   scanf("%s", birthday);
   printf("Podaj zarobki: ");
   scanf("%f", &salary);
@@ -186,6 +187,15 @@ void deleteFootballer(PGconn *conn) {
   int id;
   scanf("%d", &id);
   getchar();
+  PGresult *result;
+  char helpCommand[100];
+  sprintf(helpCommand, "SELECT * FROM footballer WHERE idfootballer=%d", id);
+  result = PQexec(conn, helpCommand);
+  if (PQntuples(result) == 0) {
+    printf("Nie ma rekordu o takim id.\n");
+    PQclear(result);
+    return;
+  }
   char command[1000];
   sprintf(command, "DELETE FROM footballer WHERE idfootballer=%d", id);
   doSQL(conn, command);
@@ -196,6 +206,15 @@ void findById(PGconn *conn) {
   int id;
   scanf("%d", &id);
   getchar();
+  PGresult *result;
+  char helpCommand[100];
+  sprintf(helpCommand, "SELECT * FROM footballer WHERE idfootballer=%d", id);
+  result = PQexec(conn, helpCommand);
+  if (PQntuples(result) == 0) {
+    printf("Nie ma rekordu o takim id.\n");
+    PQclear(result);
+    return;
+  }
   char command[1000];
   sprintf(command, "SELECT * FROM footballer WHERE idfootballer=%d", id);
   doSQL(conn, command);
